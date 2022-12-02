@@ -5,7 +5,7 @@ import Effect (Effect)
 import Data.Either (Either(..))
 import Data.Foldable (class Foldable)
 import Data.List (fromFoldable)
-import StringParser (ParseError(..), printParserError)
+import StringParser (printParserError)
 
 import Text.HTML.Parser (Attribute(..), HTML, parseHTML)
 import Text.HTML.Parser.Array (element, textNode, voidElement)
