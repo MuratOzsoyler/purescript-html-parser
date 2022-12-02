@@ -22,3 +22,6 @@ textNode = TextNode
 
 commentNode :: String -> HTML
 commentNode = CommentNode
+
+documentType :: String -> String -> String -> HTML
+documentType name publicId systemId = DocumentType {name, publicId, systemId} 

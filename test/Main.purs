@@ -8,7 +8,7 @@ import Prelude (Unit, discard, show, ($), (/=), (<>))
 import StringParser (printParserError)
 import Test.Utils (fail, runTest, success)
 import Text.HTML.Parser (Attribute(..), HTML, parseHTML)
-import Text.HTML.Parser.Array (commentNode, element, textNode, voidElement)
+import Text.HTML.Parser.Array (commentNode, documentType, element, textNode, voidElement)
 
 main :: Effect Unit
 main = runTest do
@@ -95,6 +95,26 @@ main = runTest do
     , commentNode " abcd "
     , voidElement "i" []
     ]
+
+  -- See if it can parse empty DocumentType
+
+  assertParse """<!DOCTYPE>"""
+    [ documentType "" "" ""]
+
+  -- See if it can parse DocumentType with name only
+
+  assertParse """<!DOCTYPE html >"""
+    [ documentType "html" "" ""]
+
+  -- See if it can parse DocumentType with name and publicId
+
+  assertParse """<!DOCTYPE html public "-//W3C//DTD HTML 4.0 Transitional//EN" >"""
+    [ documentType "html" "-//W3C//DTD HTML 4.0 Transitional//EN" ""]
+
+  -- See if it can parse DocumentType with name and publicId and systemId
+
+  assertParse """<!DOCTYPE html public "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">"""
+    [ documentType "html" "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"]
 
 assertParse
   :: forall f. (Foldable f)

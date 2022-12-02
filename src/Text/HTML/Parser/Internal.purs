@@ -5,8 +5,8 @@ import Data.Either (Either)
 import Data.List (List)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
-import Prelude (Unit, bind, discard, flip, pure, ($), (<$>), (<*), (<<<))
-import StringParser (ParseError, Parser, anyChar, manyTill, runParser, try)
+import Prelude (Unit, bind, discard, flip, pure, ($), (*>), (/=), (<$>), (<*), (<<<))
+import StringParser (ParseError, Parser, alphaNum, anyChar, between, manyTill, option, runParser, try, whiteSpace)
 import StringParser.CodeUnits (char, eof, noneOf, satisfy, skipSpaces, string)
 import StringParser.Combinators (fix, many, many1, optionMaybe, sepEndBy)
 import Text.HTML.Parser.Combinators (fromChars, isAlphaNumeric, notFollowedBy)
@@ -14,6 +14,9 @@ import Text.HTML.Parser.Types (Attribute(..), HTML(..))
 
 parseHTML :: String -> Either ParseError (List HTML)
 parseHTML s = flip runParser s $ many parseNode <* eof
+
+singletonElements ∷ Array String
+singletonElements = ["meta"]
 
 parseElement :: Parser HTML
 parseElement = do
@@ -27,6 +30,7 @@ parseNode = fix \_ ->
   try parseElement <|>
   try parseVoidElement <|>
   try parseCommentElement <|>
+  try parseDocumentType <|>
   parseTextNode
 
 parseOpenTag :: Parser (Tuple String (List Attribute))
@@ -101,3 +105,20 @@ parseCommentElement = do
   where
     contents = manyTill anyChar end 
     end = string "-->"
+
+parseDocumentType :: Parser HTML
+parseDocumentType = do
+  _ <- start *> many whiteSpace
+  name <- option "" $ (fromChars <$> (many1 alphaNum)) <* skipSpaces
+  publicId <- option "" do
+    _ <- public *> skipSpaces 
+    between strSep strSep str <* skipSpaces   
+  systemId <- option "" $ between strSep strSep str <* skipSpaces
+  _ <- end
+  pure $ DocumentType {name, publicId, systemId}
+  where
+    start = try (string "<!DOCTYPE") <|> try (string "<!doctype")
+    public = try (string "PUBLIC") <|> try (string "public")
+    str = fromChars <$> many (satisfy (_ /= '"'))
+    strSep = char '"'
+    end = char '>'

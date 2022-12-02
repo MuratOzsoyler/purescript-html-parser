@@ -10,6 +10,7 @@ data HTML
   | VoidElement String (List Attribute)
   | TextNode String
   | CommentNode String
+  | DocumentType {name :: String, publicId :: String, systemId :: String} 
 
 type ParseResult = Either ParseError (List HTML)
 
@@ -28,6 +29,9 @@ instance eqHTML :: Eq HTML where
   eq (CommentNode text1) (CommentNode text2) = text1 == text2
   eq (CommentNode _) _ = false
 
+  eq (DocumentType rec1) (DocumentType rec2) = rec1 == rec2
+  eq (DocumentType _) _ = false
+
 instance showHTML :: Show HTML where
   show (Element name attrs children) =
     "Element " <> show name <> " (" <> show attrs <> ") (" <> show children <> ")"
@@ -35,6 +39,7 @@ instance showHTML :: Show HTML where
     "VoidElement " <> show name <> " (" <> show attrs <> ")"
   show (TextNode text) = "TextNode " <> show text
   show (CommentNode text) = "CommentNode " <> show text
+  show (DocumentType rec) = "DocumentType" <> show rec
 
 data Attribute = Attribute String String
 
