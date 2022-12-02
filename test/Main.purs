@@ -5,7 +5,7 @@ import Effect (Effect)
 import Data.Either (Either(..))
 import Data.Foldable (class Foldable)
 import Data.List (fromFoldable)
-import Text.Parsing.StringParser (ParseError(..))
+import StringParser (ParseError(..), printParserError)
 
 import Text.HTML.Parser (Attribute(..), HTML, parseHTML)
 import Text.HTML.Parser.Array (element, textNode, voidElement)
@@ -89,8 +89,8 @@ assertParse
   :: forall f. (Foldable f)
   => String -> f HTML -> Effect Unit
 assertParse input expected = case parseHTML input of
-  Left (ParseError e) ->
-    fail $ "Parse error for " <> show input <> "\n  Error: " <> e
+  Left err ->
+    fail $ "Parse error for " <> show input <> "\n  Error: " <> printParserError err
   Right actual | actual /= expected' ->
     fail $ "Expected: " <> show expected' <> "\n  Actual: " <> show actual
   _ -> success input

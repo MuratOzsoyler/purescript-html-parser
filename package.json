@@ -7,8 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "bower": "bower",
-    "pulp": "pulp"
+    "test": "npx spago test",
+    "build": "npx spago build"
   },
   "repository": {
     "type": "git",
@@ -21,8 +21,8 @@
   },
   "homepage": "https://github.com/carymrobbins/purescript-html-parser#readme",
   "devDependencies": {
-    "bower": "^1.8.8",
-    "pulp": "^15.0.0",
-    "purescript": "^0.13.8"
+    "purescript": "^0.15.6",
+    "purescript-psa": "^0.8.2",
+    "spago": "^0.20.9"
   }
 }

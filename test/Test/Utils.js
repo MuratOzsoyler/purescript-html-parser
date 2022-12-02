@@ -3,20 +3,20 @@
 
 // module Test.Utils
 
-exports.exit = function (exitCode) {
+export function exit(exitCode) {
   return function () {
     process.exit(exitCode);
   };
-};
+}
 
 var globalExitStatus = 0;
 
-exports.setExitStatus = function (exitCode) {
+export function setExitStatus(exitCode) {
   return function () {
     globalExitStatus = exitCode;
   };
-};
+}
 
-exports.getExitStatus = function () {
+export function getExitStatus() {
   return globalExitStatus;
-};
+}

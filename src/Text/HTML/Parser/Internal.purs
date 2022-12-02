@@ -7,13 +7,13 @@ import Data.List (List)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
 
-import Text.Parsing.StringParser (
+import StringParser (
   ParseError, Parser, runParser, try
 )
-import Text.Parsing.StringParser.Combinators (
+import StringParser.Combinators (
   fix, many, many1, optionMaybe, sepEndBy
 )
-import Text.Parsing.StringParser.CodeUnits (char, eof, noneOf, satisfy, skipSpaces, string)
+import StringParser.CodeUnits (char, eof, noneOf, satisfy, skipSpaces, string)
 
 import Text.HTML.Parser.Combinators (fromChars, isAlphaNumeric, notFollowedBy)
 import Text.HTML.Parser.Types (Attribute(..), HTML(..))

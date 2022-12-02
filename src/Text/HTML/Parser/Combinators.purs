@@ -6,7 +6,7 @@ import Control.Alt ((<|>))
 import Data.Char (toCharCode)
 import Data.Foldable (class Foldable, foldMap)
 import Data.String.CodeUnits (singleton)
-import Text.Parsing.StringParser (Parser, fail, try)
+import StringParser (Parser, fail, try)
 
 -- | Fail if the specified parser matches.
 notFollowedBy :: forall a. Parser a -> Parser Unit

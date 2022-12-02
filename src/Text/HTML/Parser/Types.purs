@@ -3,7 +3,7 @@ module Text.HTML.Parser.Types where
 import Prelude
 import Data.List (List)
 import Data.Either (Either)
-import Text.Parsing.StringParser (ParseError)
+import StringParser (ParseError)
 
 data HTML
   = Element String (List Attribute) (List HTML)
