@@ -1,20 +1,14 @@
 module Text.HTML.Parser.Internal where
 
-import Prelude (Unit, bind, discard, flip, pure, ($), (<$>), (<*), (<<<))
 import Control.Alt ((<|>))
 import Data.Either (Either)
 import Data.List (List)
 import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..))
-
-import StringParser (
-  ParseError, Parser, runParser, try
-)
-import StringParser.Combinators (
-  fix, many, many1, optionMaybe, sepEndBy
-)
+import Prelude (Unit, bind, discard, flip, pure, ($), (<$>), (<*), (<<<))
+import StringParser (ParseError, Parser, anyChar, manyTill, runParser, try)
 import StringParser.CodeUnits (char, eof, noneOf, satisfy, skipSpaces, string)
-
+import StringParser.Combinators (fix, many, many1, optionMaybe, sepEndBy)
 import Text.HTML.Parser.Combinators (fromChars, isAlphaNumeric, notFollowedBy)
 import Text.HTML.Parser.Types (Attribute(..), HTML(..))
 
@@ -32,6 +26,7 @@ parseNode :: Parser HTML
 parseNode = fix \_ ->
   try parseElement <|>
   try parseVoidElement <|>
+  try parseCommentElement <|>
   parseTextNode
 
 parseOpenTag :: Parser (Tuple String (List Attribute))
@@ -98,3 +93,11 @@ parseAttributeValue = do
       value <- fromChars <$> many (noneOf [openChar])
       _ <- char openChar
       pure value
+
+parseCommentElement :: Parser HTML
+parseCommentElement = do
+  _ <- string "<!--"
+  CommentNode <<< fromChars <$> contents
+  where
+    contents = manyTill anyChar end 
+    end = string "-->"

@@ -1,16 +1,14 @@
 module Test.Main where
 
-import Prelude (Unit, discard, show, ($), (/=), (<>))
-import Effect (Effect)
 import Data.Either (Either(..))
 import Data.Foldable (class Foldable)
 import Data.List (fromFoldable)
+import Effect (Effect)
+import Prelude (Unit, discard, show, ($), (/=), (<>))
 import StringParser (printParserError)
-
-import Text.HTML.Parser (Attribute(..), HTML, parseHTML)
-import Text.HTML.Parser.Array (element, textNode, voidElement)
-
 import Test.Utils (fail, runTest, success)
+import Text.HTML.Parser (Attribute(..), HTML, parseHTML)
+import Text.HTML.Parser.Array (commentNode, element, textNode, voidElement)
 
 main :: Effect Unit
 main = runTest do
@@ -83,6 +81,19 @@ main = runTest do
 
   assertParse """<br class = solid/>"""
     [ voidElement "br" [Attribute "class" "solid"]
+    ]
+
+  -- See if comment can be parsed
+
+  assertParse """<!-- abcdef-->"""
+    [ commentNode " abcdef"]
+
+  -- See if comment can be parsed between elements
+
+  assertParse """<br class="solid"/><!-- abcd --><i/>"""
+    [ voidElement "br" [Attribute "class" "solid"]
+    , commentNode " abcd "
+    , voidElement "i" []
     ]
 
 assertParse
